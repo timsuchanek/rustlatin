@@ -333,16 +333,19 @@ pub fn rustlatin_fastester4(sentence: &str) -> String {
 
 // Notice the use of `split(|c| c == ' ')` - very handy function!
 pub fn rustlatin_fastester5(sentence: &str) -> String {
-    let mut result: String = String::with_capacity(sentence.len());
+    let mut result: Vec<u8> = Vec::with_capacity(sentence.len());
     for word in sentence.split(|c| c == ' ') {
         let vowel = word.starts_with(|c| is_vowel_fast4(c as u8));
         if vowel {
-            result.push_str(&("sr".to_owned() + word + " "));
+            result.extend_from_slice(b"sr");
+            result.extend_from_slice(word.as_bytes());
         } else {
-            result.push_str(&(word.to_owned() + "rs "));
+            result.extend_from_slice(word.as_bytes());
+            result.extend_from_slice(b"rs");
         }
+        result.extend_from_slice(b" ");
     }
-    result
+    unsafe { String::from_utf8_unchecked(result) }
 }
 #[test]
 fn rustlatin_fastester2_test() {

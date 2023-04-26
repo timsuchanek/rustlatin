@@ -90,15 +90,15 @@ fn bench_rustlatin_fastester3(b: &mut Bencher) {
 fn bench_rustlatin_fastester4(b: &mut Bencher) {
     let str = long_str();
     b.iter(|| {
-        rustlatin_fastester3(SHORT_STR);
-        rustlatin_fastester3(&str);
+        rustlatin_fastester4(SHORT_STR);
+        rustlatin_fastester4(&str);
     });
 }
 fn bench_rustlatin_fastester5(b: &mut Bencher) {
     let str = long_str();
     b.iter(|| {
-        rustlatin_fastester3(SHORT_STR);
-        rustlatin_fastester3(&str);
+        rustlatin_fastester5(SHORT_STR);
+        rustlatin_fastester5(&str);
     });
 }
 
