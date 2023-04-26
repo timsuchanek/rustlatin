@@ -120,20 +120,20 @@ fn bench_rustlatin_rayon_map(b: &mut Bencher) {
 
 benchmark_group!(
     benches,
-    //    bench_rustlatin,
-    //    bench_rustlatin_map,
-    //    bench_rustlatin_faster,
-    //    bench_rustlatin_fastest,
-    //    bench_rustlatin_fastest_simd,
-    //    bench_rustlatin_fastest_match,
-    //    bench_rustlatin_fastest_map,
+    bench_rustlatin,
+    bench_rustlatin_map,
+    bench_rustlatin_faster,
+    bench_rustlatin_fastest,
+    bench_rustlatin_fastest_simd,
+    bench_rustlatin_fastest_match,
+    bench_rustlatin_fastest_map,
     bench_rustlatin_fastester,
     bench_rustlatin_fastester2,
     bench_rustlatin_fastester3,
     bench_rustlatin_fastester4,
     bench_rustlatin_fastester5,
-    //    bench_rustlatin_rayon,
-    //    bench_rustlatin_rayon_map,
+    bench_rustlatin_rayon,
+    bench_rustlatin_rayon_map,
 );
 
 benchmark_main!(benches);
