@@ -73,6 +73,34 @@ fn bench_rustlatin_fastester(b: &mut Bencher) {
         rustlatin_fastester(&str);
     });
 }
+fn bench_rustlatin_fastester2(b: &mut Bencher) {
+    let str = long_str();
+    b.iter(|| {
+        rustlatin_fastester2(SHORT_STR);
+        rustlatin_fastester2(&str);
+    });
+}
+fn bench_rustlatin_fastester3(b: &mut Bencher) {
+    let str = long_str();
+    b.iter(|| {
+        rustlatin_fastester3(SHORT_STR);
+        rustlatin_fastester3(&str);
+    });
+}
+fn bench_rustlatin_fastester4(b: &mut Bencher) {
+    let str = long_str();
+    b.iter(|| {
+        rustlatin_fastester3(SHORT_STR);
+        rustlatin_fastester3(&str);
+    });
+}
+fn bench_rustlatin_fastester5(b: &mut Bencher) {
+    let str = long_str();
+    b.iter(|| {
+        rustlatin_fastester3(SHORT_STR);
+        rustlatin_fastester3(&str);
+    });
+}
 
 fn bench_rustlatin_rayon(b: &mut Bencher) {
     let str = long_str();
@@ -92,16 +120,20 @@ fn bench_rustlatin_rayon_map(b: &mut Bencher) {
 
 benchmark_group!(
     benches,
-    bench_rustlatin,
-    bench_rustlatin_map,
-    bench_rustlatin_faster,
-    bench_rustlatin_fastest,
-    bench_rustlatin_fastest_simd,
-    bench_rustlatin_fastest_match,
-    bench_rustlatin_fastest_map,
+    //    bench_rustlatin,
+    //    bench_rustlatin_map,
+    //    bench_rustlatin_faster,
+    //    bench_rustlatin_fastest,
+    //    bench_rustlatin_fastest_simd,
+    //    bench_rustlatin_fastest_match,
+    //    bench_rustlatin_fastest_map,
     bench_rustlatin_fastester,
-    bench_rustlatin_rayon,
-    bench_rustlatin_rayon_map,
+    bench_rustlatin_fastester2,
+    bench_rustlatin_fastester3,
+    bench_rustlatin_fastester4,
+    bench_rustlatin_fastester5,
+    //    bench_rustlatin_rayon,
+    //    bench_rustlatin_rayon_map,
 );
 
 benchmark_main!(benches);
