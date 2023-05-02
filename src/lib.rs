@@ -1,6 +1,7 @@
 use lazy_static;
 use packed_simd_2::u8x32;
 use rayon::prelude::*;
+use std::ascii::AsciiExt;
 use std::collections::{HashSet, VecDeque};
 use std::str;
 
@@ -249,6 +250,128 @@ pub fn rustlatin_fastester(sentence: &str) -> String {
     }
 
     result
+}
+
+// Only change: `split_ascii_whitespace`
+pub fn rustlatin_fastester2(sentence: &str) -> String {
+    let words: Vec<&str> = sentence.split_ascii_whitespace().collect();
+    let mut result = String::with_capacity(sentence.len() + words.len() * 2);
+
+    for (index, word) in words.iter().enumerate() {
+        let first_char = word.chars().next().unwrap();
+        let vowel = is_vowel(first_char);
+        if vowel {
+            result.push_str("sr");
+        }
+        result.push_str(word);
+        if !vowel {
+            result.push_str("rs");
+        }
+        if index < words.len() - 1 {
+            result.push(' ');
+        }
+    }
+
+    result
+}
+#[inline(always)]
+fn is_vowel_fast2(c: u8) -> bool {
+    match c {
+        b'A' | b'a' | b'E' | b'e' | b'I' | b'i' | b'O' | b'o' | b'U' | b'u' => true,
+        _ => false,
+    }
+}
+pub fn rustlatin_fastester3(sentence: &str) -> String {
+    let words: Vec<&str> = sentence.split_ascii_whitespace().collect();
+    let mut result = String::with_capacity(sentence.len() + words.len() * 2);
+
+    for (index, word) in words.iter().enumerate() {
+        let first_char = (word).bytes().next().unwrap();
+        let vowel = is_vowel_fast2(first_char);
+        if vowel {
+            result.push_str("sr");
+        }
+        result.push_str(word);
+        if !vowel {
+            result.push_str("rs");
+        }
+        if index < words.len() - 1 {
+            result.push(' ');
+        }
+    }
+
+    result
+}
+
+#[inline(always)]
+pub fn is_vowel_fast4(c: u8) -> bool {
+    match c {
+        b'a' | b'e' | b'i' | b'o' | b'u' => true,
+        _ => false,
+    }
+}
+
+// working on raw byte values with `b".."` style tricks can lead
+// to some predictable perf gains - kinda sad I couldn't find it here
+pub fn rustlatin_fastester4(sentence: &str) -> String {
+    let words: Vec<&str> = sentence.split_ascii_whitespace().collect();
+    let mut result: Vec<u8> = Vec::with_capacity(sentence.len() + words.len() * 2);
+    words.iter().for_each(|word| {
+        let vowel = word.starts_with(|c| is_vowel_fast4(c as u8));
+        if vowel {
+            result.extend_from_slice(b"sr");
+            result.extend_from_slice(word.as_bytes());
+        } else {
+            result.extend_from_slice(word.as_bytes());
+            result.extend_from_slice(b"rs");
+        }
+        result.extend_from_slice(b" ");
+    });
+
+    unsafe { String::from_utf8_unchecked(result) }
+}
+
+// Notice the use of `split(|c| c == ' ')` - very handy function!
+pub fn rustlatin_fastester5(sentence: &str) -> String {
+    let mut result: Vec<u8> = Vec::with_capacity(sentence.len());
+    for word in sentence.split(|c| c == ' ') {
+        let vowel = word.starts_with(|c| is_vowel_fast4(c as u8));
+        if vowel {
+            result.extend_from_slice(b"sr");
+            result.extend_from_slice(word.as_bytes());
+        } else {
+            result.extend_from_slice(word.as_bytes());
+            result.extend_from_slice(b"rs");
+        }
+        result.extend_from_slice(b" ");
+    }
+    unsafe { String::from_utf8_unchecked(result) }
+}
+#[test]
+fn rustlatin_fastester2_test() {
+    use crate::*;
+    let s = "scope is hot";
+    assert_eq!(rustlatin_fastester2(s), "scopers sris hotrs");
+}
+#[test]
+fn rustlatin_fastester3_test() {
+    use crate::*;
+    let s = "scope is hot";
+    assert_eq!(rustlatin_fastester3(s), "scopers sris hotrs");
+}
+// Notice the trailing space - I guess it was left unspecified!
+// Just wanted to make sure I wasn't doing anything profane here
+#[test]
+fn rustlatin_fastester4_test() {
+    use crate::*;
+    let s = "scope is hot";
+    assert_eq!(rustlatin_fastester4(s), "scopers sris hotrs ");
+}
+#[test]
+fn rustlatin_fastester5_test() {
+    use crate::*;
+    let s = "scope is hot";
+    assert_eq!(rustlatin_fastester5(s), "scopers sris hotrs ");
 }
 
 pub fn rustlatin_rayon(sentence: &str) -> String {
